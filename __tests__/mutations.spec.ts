@@ -33,7 +33,27 @@ afterEach(async () => {
 });
 
 describe("Mutations", () => {
-  it("Runs Mutations as described", async () => {
+  it("Runs only bob edits", async () => {
+    const res = await runOnlyBobTest(request);
+    expect(res.text).toBe("The house is red.");
+  });
+
+  it("Runs bob insert and delete", async () => {
+    await runOnlyBobTest(request);
+
+    const res = await runInsertandDeleteBobTest(request);
+    expect(res.text).toBe("The house is blue");
+  });
+
+  it("Runs alice with no conflict", async () => {
+    await runOnlyBobTest(request);
+    await runInsertandDeleteBobTest(request);
+
+    const res = await runBobAndAliceNoConflictTest(request);
+    expect(res.text).toBe("The house is green");
+  });
+
+  it("Runs bob and alice with conflict", async () => {
     await runOnlyBobTest(request);
     await runInsertandDeleteBobTest(request);
     await runBobAndAliceNoConflictTest(request);
